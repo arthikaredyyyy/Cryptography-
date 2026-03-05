@@ -1,0 +1,36 @@
+import random
+import string
+
+def generate_key(length):
+    return [random.randint(0,25) for _ in range(length)]
+
+def encrypt(plaintext, key):
+    plaintext = plaintext.upper()
+    ciphertext = ""
+    for i, char in enumerate(plaintext):
+        if char in string.ascii_uppercase:
+            shift = key[i]
+            ciphertext += chr((ord(char)-65+shift)%26 + 65)
+        else:
+            ciphertext += char
+    return ciphertext
+
+def decrypt(ciphertext, key):
+    plaintext = ""
+    for i, char in enumerate(ciphertext):
+        if char in string.ascii_uppercase:
+            shift = key[i]
+            plaintext += chr((ord(char)-65-shift)%26 + 65)
+        else:
+            plaintext += char
+    return plaintext
+
+message = "HELLO WORLD"
+key = generate_key(len(message))
+cipher = encrypt(message, key)
+plain = decrypt(cipher, key)
+
+print("Plaintext:", message)
+print("Key:", key)
+print("Ciphertext:", cipher)
+print("Decrypted:", plain)
