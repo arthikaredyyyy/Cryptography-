@@ -1,0 +1,31 @@
+BLOCK_SIZE = 12
+
+def xor_block(a, b):
+    return ''.join('0' if a[i]==b[i] else '1' for i in range(BLOCK_SIZE))
+
+def sdes_encrypt_block(plain, key):
+    return ''.join('0' if plain[i]==key[i] else '1' for i in range(BLOCK_SIZE))
+
+def increment_counter(counter):
+    counter_int = int(counter, 2) + 1
+    return bin(counter_int)[2:].zfill(BLOCK_SIZE)
+
+def encrypt_decrypt_ctr(plaintext_blocks, key, counter):
+    output_blocks = []
+    for block in plaintext_blocks:
+        temp = sdes_encrypt_block(counter, key)
+        out = xor_block(block, temp)
+        output_blocks.append(out)
+        counter = increment_counter(counter)
+    return output_blocks
+
+key = "011111110101"
+counter = "000000000000"
+plaintext_blocks = ["000000010000", "001000000100", "000000000000"]
+
+ciphertext_blocks = encrypt_decrypt_ctr(plaintext_blocks, key, counter)
+counter_dec = "000000000000"
+decrypted_blocks = encrypt_decrypt_ctr(ciphertext_blocks, key, counter_dec)
+
+for i in range(len(plaintext_blocks)):
+    print("Plaintext:", plaintext_blocks[i], "Ciphertext:", ciphertext_blocks[i], "Decrypted:", decrypted_blocks[i])
