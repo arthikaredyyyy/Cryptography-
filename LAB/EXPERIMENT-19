@@ -1,0 +1,13 @@
+from Crypto.Cipher import DES3
+from Crypto.Random import get_random_bytes
+from Crypto.Util.Padding import pad, unpad
+
+key = DES3.adjust_key_parity(get_random_bytes(24))
+iv = get_random_bytes(8)
+data = b"Secret message that needs encryption"
+cipher = DES3.new(key, DES3.MODE_CBC, iv)
+encrypted = cipher.encrypt(pad(data, DES3.block_size))
+decipher = DES3.new(key, DES3.MODE_CBC, iv)
+decrypted = unpad(decipher.decrypt(encrypted), DES3.block_size)
+print(encrypted)
+print(decrypted)
