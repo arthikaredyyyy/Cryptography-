@@ -1,0 +1,19 @@
+plaintext = input("Enter plaintext: ")
+
+plain_alphabet = "abcdefghijklmnopqrstuvwxyz"
+cipher_key = "qwertyuiopasdfghjklzxcvbnm"   # substitution key
+
+ciphertext = ""
+
+for ch in plaintext:
+    if ch.isalpha():
+        if ch.islower():
+            index = plain_alphabet.index(ch)
+            ciphertext += cipher_key[index]
+        else:
+            index = plain_alphabet.index(ch.lower())
+            ciphertext += cipher_key[index].upper()
+    else:
+        ciphertext += ch
+
+print("Ciphertext:", ciphertext)
