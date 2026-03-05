@@ -1,0 +1,31 @@
+from Crypto.Cipher import AES
+
+def xor_bytes(a,b):
+    return bytes(x^y for x,y in zip(a,b))
+
+def left_shift(bits):
+    shifted = int.from_bytes(bits,'big') << 1
+    return (shifted & (2**(len(bits)*8)-1)).to_bytes(len(bits),'big')
+
+def generate_subkeys(key, block_size_bits):
+    zero_block = bytes(block_size_bits//8)
+    cipher = AES.new(key, AES.MODE_ECB)
+    L = cipher.encrypt(zero_block)
+    if block_size_bits == 128:
+        Rb = 0x87
+    elif block_size_bits == 64:
+        Rb = 0x1B
+    else:
+        raise ValueError("Unsupported block size")
+    K1 = left_shift(L)
+    if L[0] & 0x80:
+        K1 = xor_bytes(K1, bytes([Rb]+[0]*(len(L)-1)))
+    K2 = left_shift(K1)
+    if K1[0] & 0x80:
+        K2 = xor_bytes(K2, bytes([Rb]+[0]*(len(L)-1)))
+    return K1,K2
+
+key = b'0123456789abcdef'
+K1,K2 = generate_subkeys(key,128)
+print("Subkey K1:", K1.hex())
+print("Subkey K2:", K2.hex())
