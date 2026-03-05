@@ -1,0 +1,46 @@
+def gcd(a, b):
+    while b != 0:
+        a, b = b, a % b
+    return a
+
+def modinv(a, m):
+    m0, x0, x1 = m, 0, 1
+    if m == 1:
+        return 0
+    while a > 1:
+        q = a // m
+        a, m = m, a % m
+        x0, x1 = x1 - q * x0, x0
+    return x1 + m0 if x1 < 0 else x1
+
+def powmod(base, exp, mod):
+    result = 1
+    base = base % mod
+    while exp > 0:
+        if exp % 2 == 1:
+            result = (result * base) % mod
+        exp = exp >> 1
+        base = (base * base) % mod
+    return result
+
+p, q = 59, 61
+n = p * q
+phi = (p - 1) * (q - 1)
+e = 17
+d = modinv(e, phi)
+
+message = 1234
+ciphertext = powmod(message, e, n)
+decrypted = powmod(ciphertext, d, n)
+
+print("Public key (e,n):", (e, n))
+print("Private key d:", d)
+print("Original message:", message)
+print("Encrypted:", ciphertext)
+print("Decrypted:", decrypted)
+
+
+e_new = 7
+d_new = modinv(e_new, phi)  # attacker can compute this since phi(n) is known if d leaked
+print("New public key (e_new,n):", (e_new, n))
+print("New private key d_new:", d_new)
