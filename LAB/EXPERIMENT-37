@@ -1,0 +1,40 @@
+import itertools
+from collections import Counter
+
+english_freq = "ETAOINSHRDLCUMWFGYPBVKJXQZ"
+
+def score(text):
+    common = ["THE","AND","TO","OF","IN","IS","YOU","THAT"]
+    s = 0
+    for w in common:
+        s += text.count(w)*5
+    return s
+
+def decrypt(cipher, mapping):
+    res = ""
+    for c in cipher:
+        if c.isalpha():
+            res += mapping.get(c, c)
+        else:
+            res += c
+    return res
+
+def freq_attack(cipher, top_n):
+    cipher = cipher.upper()
+    freq = Counter([c for c in cipher if c.isalpha()])
+    sorted_cipher = [x[0] for x in freq.most_common()]
+    possible_maps = []
+
+    for perm in itertools.permutations(english_freq[:len(sorted_cipher)]):
+        mapping = dict(zip(sorted_cipher, perm))
+        text = decrypt(cipher, mapping)
+        possible_maps.append((score(text), text))
+
+    possible_maps.sort(reverse=True)
+    for i in range(min(top_n, len(possible_maps))):
+        print("\nCandidate", i+1)
+        print(possible_maps[i][1])
+
+cipher = input("Enter ciphertext: ")
+top_n = int(input("Enter number of plaintext guesses: "))
+freq_attack(cipher, top_n)
