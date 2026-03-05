@@ -1,0 +1,40 @@
+import string
+freq_order = "ETAOINSHRDLCUMWFGYPBVKJXQZ"
+
+def calculate_frequency(text):
+    freq = {ch:0 for ch in string.ascii_uppercase}
+    for c in text.upper():
+        if c in freq:
+            freq[c] += 1
+    return freq
+
+def sort_by_frequency(freq):
+    return sorted(freq, key=freq.get, reverse=True)
+
+def generate_plaintext(cipher, letters, shift):
+    mapping = {}
+    
+    for i in range(26):
+        mapping[letters[i]] = freq_order[(i + shift) % 26]
+
+    plaintext = ""
+    for c in cipher.upper():
+        if c in mapping:
+            plaintext += mapping[c]
+        else:
+            plaintext += c
+    return plaintext
+
+# Input
+cipher = input("Enter Ciphertext: ")
+top = int(input("Enter number of possible plaintexts to display: "))
+
+freq = calculate_frequency(cipher)
+letters = sort_by_frequency(freq)
+
+print("\nPossible Plaintexts:\n")
+
+for i in range(top):
+    print(f"Candidate {i+1}:")
+    print(generate_plaintext(cipher, letters, i))
+    print()
