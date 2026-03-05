@@ -1,0 +1,27 @@
+import numpy as np
+
+key = np.array([[9,4],[5,7]])
+
+text = input("Enter plaintext: ").replace(" ","").upper()
+
+if len(text)%2!=0:
+    text += "X"
+
+def char_to_num(c):
+    return ord(c)-65
+
+def num_to_char(n):
+    return chr(n+65)
+
+cipher=""
+
+for i in range(0,len(text),2):
+    pair = np.array([[char_to_num(text[i])],
+                     [char_to_num(text[i+1])]])
+
+    result = np.dot(key,pair) % 26
+
+    cipher += num_to_char(result[0][0])
+    cipher += num_to_char(result[1][0])
+
+print("Ciphertext:",cipher)
