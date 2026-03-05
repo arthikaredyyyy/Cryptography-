@@ -1,0 +1,22 @@
+shift_schedule = [1,1,2,2,2,2,2,2,1,2,2,2,2,2,2,1]
+
+def left_shift(bits,n):
+    return bits[n:] + bits[:n]
+
+key = input("Enter 56-bit binary key: ")
+
+C = key[:28]
+D = key[28:]
+
+subkeys = []
+
+for i in range(16):
+    C = left_shift(C,shift_schedule[i])
+    D = left_shift(D,shift_schedule[i])
+    part1 = C[:24]
+    part2 = D[:24]
+    subkey = part1 + part2
+    subkeys.append(subkey)
+
+for i in range(16):
+    print("K",i+1,":",subkeys[i])
