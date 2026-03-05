@@ -1,0 +1,29 @@
+import string
+
+alphabet = string.ascii_lowercase
+
+
+plaintext = "sendmoremoney"
+key = [9,0,1,7,23,15,21,14,11,11,2,8,9]
+
+cipher = ""
+
+for i in range(len(plaintext)):
+    p = alphabet.index(plaintext[i])
+    k = key[i]
+    c = (p + k) % 26
+    cipher += alphabet[c]
+
+print("Ciphertext:", cipher)
+
+# Part (b) Find key for new plaintext
+new_plain = "cashnotneeded"
+new_key = []
+
+for i in range(len(cipher)):
+    c = alphabet.index(cipher[i])
+    p = alphabet.index(new_plain[i])
+    k = (c - p) % 26
+    new_key.append(k)
+
+print("Key for 'cashnotneeded':", new_key)
