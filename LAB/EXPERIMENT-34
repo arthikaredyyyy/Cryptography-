@@ -1,0 +1,45 @@
+from Crypto.Cipher import DES
+from Crypto.Random import get_random_bytes
+
+def pad_bits(data, block_size_bytes):
+    n = len(data)
+    pad_len = block_size_bytes - (n % block_size_bytes)
+    if pad_len == 0:
+        pad_len = block_size_bytes
+    return data + b'\x80' + b'\x00'*(pad_len-1)
+
+def unpad_bits(data):
+    i = len(data) - 1
+    while i >= 0 and data[i] == 0:
+        i -= 1
+    if i >= 0 and data[i] == 0x80:
+        return data[:i]
+    return data
+
+key = get_random_bytes(8)
+iv = get_random_bytes(8)
+plaintext = b"SecretMessage123"  # multiple blocks
+
+padded = pad_bits(plaintext, DES.block_size)
+
+
+cipher_ecb = DES.new(key, DES.MODE_ECB)
+encrypted_ecb = cipher_ecb.encrypt(padded)
+decipher_ecb = DES.new(key, DES.MODE_ECB)
+decrypted_ecb = decipher_ecb.decrypt(encrypted_ecb)
+
+# CBC
+cipher_cbc = DES.new(key, DES.MODE_CBC, iv)
+encrypted_cbc = cipher_cbc.encrypt(padded)
+decipher_cbc = DES.new(key, DES.MODE_CBC, iv)
+decrypted_cbc = decipher_cbc.decrypt(encrypted_cbc)
+
+# CFB
+cipher_cfb = DES.new(key, DES.MODE_CFB, iv, segment_size=64)
+encrypted_cfb = cipher_cfb.encrypt(padded)
+decipher_cfb = DES.new(key, DES.MODE_CFB, iv, segment_size=64)
+decrypted_cfb = decipher_cfb.decrypt(encrypted_cfb)
+
+print("ECB decrypted:", decrypted_ecb)
+print("CBC decrypted:", decrypted_cbc)
+print("CFB decrypted:", decrypted_cfb)
